@@ -2,7 +2,8 @@ import React, { useState, useMemo, useEffect } from 'react';
 // import initialCardsData from './data/ichu_cards.json'; // No longer using static JSON
 import { IchuCard } from './components/IchuCard';
 import { EditCardModal } from './components/EditCardModal';
-import { Search, Filter, ArrowUpDown, LayoutGrid, LayoutList, Star, Download, Edit2, RefreshCw } from 'lucide-react';
+import { LoginModal } from './components/LoginModal';
+import { Search, Filter, ArrowUpDown, LayoutGrid, LayoutList, Star, Download, Edit2, RefreshCw, LogIn, LogOut } from 'lucide-react';
 import { cn } from './lib/utils';
 
 function App() {
@@ -16,7 +17,27 @@ function App() {
   const [viewMode, setViewMode] = useState('table'); // 'table' | 'grid'
   const [statMode, setStatMode] = useState('idolized_max'); // 'unidolized_initial', 'unidolized_max', 'idolized_initial', 'idolized_max', 'etoile'
   const [skillFilter, setSkillFilter] = useState('all');
+  const [user, setUser] = useState(null);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
   const itemsPerPage = viewMode === 'table' ? 50 : 24;
+
+  // Check for logged in user on mount
+  useEffect(() => {
+    const storedUser = localStorage.getItem('ichu_user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
+  const handleLogin = (userData) => {
+    setUser(userData);
+    localStorage.setItem('ichu_user', JSON.stringify(userData));
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    localStorage.removeItem('ichu_user');
+  };
 
   // Fetch cards from API
   const fetchCards = async () => {
@@ -48,11 +69,15 @@ function App() {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': user ? `Bearer ${user.token}` : '',
         },
         body: JSON.stringify(updatedCard),
       });
 
-      if (!response.ok) throw new Error('Failed to update card');
+      if (!response.ok) {
+        if (response.status === 401) throw new Error('Unauthorized. Please login again.');
+        throw new Error('Failed to update card');
+      }
       
       const savedCard = await response.json();
 
@@ -402,6 +427,35 @@ function App() {
                   <LayoutGrid size={18} />
                 </button>
               </div>
+
+              <button
+                onClick={downloadJson}
+                className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg flex items-center gap-2"
+                title="Download JSON"
+              >
+                <Download size={20} />
+                <span className="hidden sm:inline">Export</span>
+              </button>
+
+              {user ? (
+                <button
+                  onClick={handleLogout}
+                  className="p-2 text-red-600 hover:bg-red-50 rounded-lg flex items-center gap-2"
+                  title="Logout"
+                >
+                  <LogOut size={20} />
+                  <span className="hidden sm:inline">Logout ({user.username})</span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => setIsLoginOpen(true)}
+                  className="p-2 text-pink-600 hover:bg-pink-50 rounded-lg flex items-center gap-2"
+                  title="Login"
+                >
+                  <LogIn size={20} />
+                  <span className="hidden sm:inline">Login</span>
+                </button>
+              )}
             </div>
           </div>
 
@@ -498,13 +552,15 @@ function App() {
                               )}
                             </td>
                             <td className="px-4 py-2 text-center">
-                              <button
-                                onClick={() => setEditingCard({ card })}
-                                className="text-gray-400 hover:text-pink-600 transition-colors"
-                                title="Edit Card"
-                              >
-                                <Edit2 size={16} />
-                              </button>
+                              {user && (
+                                <button
+                                  onClick={() => setEditingCard({ card })}
+                                  className="text-gray-400 hover:text-pink-600 transition-colors"
+                                  title="Edit Card"
+                                >
+                                  <Edit2 size={16} />
+                                </button>
+                              )}
                             </td>
                           </tr>
                         );
@@ -520,7 +576,7 @@ function App() {
                     key={`${card.name}-${index}`} 
                     card={card} 
                     globalStatMode={statMode}
-                    onEdit={() => setEditingCard({ card })}
+                    onEdit={user ? () => setEditingCard({ card }) : undefined}
                   />
                 ))}
               </div>
@@ -563,6 +619,12 @@ function App() {
           onSave={handleUpdateCard}
         />
       )}
+
+      <LoginModal
+        isOpen={isLoginOpen}
+        onClose={() => setIsLoginOpen(false)}
+        onLogin={handleLogin}
+      />
     </div>
   );
 }

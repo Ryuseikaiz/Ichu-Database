@@ -73,13 +73,15 @@ export const IchuCard = ({ card, globalStatMode, onEdit }) => {
         <div className="absolute top-2 right-2 flex gap-1">
             {isEtoile && <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded-full shadow-sm font-bold">Etoile +5</span>}
             {!isEtoile && isIdolizedImage && <span className="bg-yellow-500 text-white text-xs px-2 py-1 rounded-full shadow-sm font-bold">Idolized</span>}
-            <button 
-              onClick={(e) => { e.stopPropagation(); onEdit && onEdit(); }}
-              className="bg-white/90 hover:bg-white text-gray-700 p-1 rounded-full shadow-sm transition-colors"
-              title="Edit Stats"
-            >
-              <Edit2 size={14} />
-            </button>
+            {onEdit && (
+              <button 
+                onClick={(e) => { e.stopPropagation(); onEdit(); }}
+                className="bg-white/90 hover:bg-white text-gray-700 p-1 rounded-full shadow-sm transition-colors"
+                title="Edit Stats"
+              >
+                <Edit2 size={14} />
+              </button>
+            )}
             <button 
               onClick={(e) => { e.stopPropagation(); setShowDetails(!showDetails); }}
               className="bg-white/90 hover:bg-white text-gray-700 p-1 rounded-full shadow-sm transition-colors"

@@ -9,6 +9,16 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 
+// Simple Authentication Middleware
+const authenticate = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (authHeader === 'Bearer secret-token-bedebede') {
+    next();
+  } else {
+    res.status(401).json({ error: 'Unauthorized' });
+  }
+};
+
 // Connect to MongoDB (Cached connection for Serverless)
 let isConnected = false;
 const connectToDatabase = async () => {
@@ -27,6 +37,15 @@ const connectToDatabase = async () => {
 };
 
 // Routes
+app.post('/api/login', (req, res) => {
+  const { username, password } = req.body;
+  if (username === 'bedebede' && password === '123') {
+    res.json({ token: 'secret-token-bedebede', username: 'bedebede' });
+  } else {
+    res.status(401).json({ error: 'Invalid credentials' });
+  }
+});
+
 app.get('/api/cards', async (req, res) => {
   await connectToDatabase();
   try {
@@ -37,7 +56,7 @@ app.get('/api/cards', async (req, res) => {
   }
 });
 
-app.put('/api/cards/:id', async (req, res) => {
+app.put('/api/cards/:id', authenticate, async (req, res) => {
   await connectToDatabase();
   try {
     const { id } = req.params;
