@@ -67,5 +67,16 @@ app.put('/api/cards/:id', authenticate, async (req, res) => {
   }
 });
 
+app.delete('/api/cards/:id', authenticate, async (req, res) => {
+  await connectToDatabase();
+  try {
+    const { id } = req.params;
+    await Card.findByIdAndDelete(id);
+    res.json({ message: 'Card deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // Export the app for Vercel
 module.exports = app;

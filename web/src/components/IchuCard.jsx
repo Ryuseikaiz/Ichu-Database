@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { cn } from '../lib/utils';
-import { Star, Heart, Zap, Music, Shield, Info, Edit2 } from 'lucide-react';
+import { Star, Heart, Zap, Music, Shield, Info, Edit2, Trash2 } from 'lucide-react';
 import { StatsTable } from './StatsTable';
 
 const StatBar = ({ label, value, max = 13000, color }) => {
@@ -20,7 +20,7 @@ const StatBar = ({ label, value, max = 13000, color }) => {
   );
 };
 
-export const IchuCard = ({ card, onEdit }) => {
+export const IchuCard = ({ card, onEdit, onDelete }) => {
   const [showDetails, setShowDetails] = useState(false);
   
   // Always use Idolized Image (or fallback to Unidolized)
@@ -52,6 +52,15 @@ export const IchuCard = ({ card, onEdit }) => {
                 title="Edit Stats"
               >
                 <Edit2 size={14} />
+              </button>
+            )}
+            {onDelete && (
+              <button 
+                onClick={(e) => { e.stopPropagation(); onDelete(); }}
+                className="bg-white/90 hover:bg-white text-red-600 p-1 rounded-full shadow-sm transition-colors"
+                title="Delete Card"
+              >
+                <Trash2 size={14} />
               </button>
             )}
             <button 

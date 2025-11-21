@@ -3,7 +3,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { IchuCard } from './components/IchuCard';
 import { EditCardModal } from './components/EditCardModal';
 import { LoginModal } from './components/LoginModal';
-import { Search, Filter, ArrowUpDown, LayoutGrid, LayoutList, Star, Download, Edit2, RefreshCw, LogIn, LogOut } from 'lucide-react';
+import { Search, Filter, ArrowUpDown, LayoutGrid, LayoutList, Star, Download, Edit2, RefreshCw, LogIn, LogOut, Trash2 } from 'lucide-react';
 import { cn } from './lib/utils';
 
 function App() {
@@ -102,6 +102,30 @@ function App() {
     } catch (err) {
       alert('Error saving card: ' + err.message);
       setCards(originalCards); // Revert on error
+    }
+  };
+
+  const handleDeleteCard = async (cardId) => {
+    if (!confirm('Are you sure you want to delete this card?')) return;
+
+    const originalCards = [...cards];
+    setCards(cards.filter(c => c._id !== cardId));
+
+    try {
+      const response = await fetch(`/api/cards/${cardId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': user ? `Bearer ${user.token}` : '',
+        },
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) throw new Error('Unauthorized. Please login again.');
+        throw new Error('Failed to delete card');
+      }
+    } catch (err) {
+      alert('Error deleting card: ' + err.message);
+      setCards(originalCards);
     }
   };
 
@@ -465,13 +489,22 @@ function App() {
                             </td>
                             <td className="px-4 py-2 text-center">
                               {user && (
-                                <button
-                                  onClick={() => setEditingCard({ card })}
-                                  className="text-gray-400 hover:text-pink-600 transition-colors"
-                                  title="Edit Card"
-                                >
-                                  <Edit2 size={16} />
-                                </button>
+                                <div className="flex items-center justify-center gap-2">
+                                  <button
+                                    onClick={() => setEditingCard({ card })}
+                                    className="text-gray-400 hover:text-pink-600 transition-colors"
+                                    title="Edit Card"
+                                  >
+                                    <Edit2 size={16} />
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteCard(card._id)}
+                                    className="text-gray-400 hover:text-red-600 transition-colors"
+                                    title="Delete Card"
+                                  >
+                                    <Trash2 size={16} />
+                                  </button>
+                                </div>
                               )}
                             </td>
                           </tr>
@@ -488,6 +521,7 @@ function App() {
                     key={`${card.name}-${index}`} 
                     card={card} 
                     onEdit={user ? () => setEditingCard({ card }) : undefined}
+                    onDelete={user ? () => handleDeleteCard(card._id) : undefined}
                   />
                 ))}
               </div>

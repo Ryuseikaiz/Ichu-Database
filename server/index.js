@@ -61,6 +61,17 @@ app.put('/api/cards/:id', authenticate, async (req, res) => {
   }
 });
 
+// DELETE card
+app.delete('/api/cards/:id', authenticate, async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Card.findByIdAndDelete(id);
+    res.json({ message: 'Card deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
