@@ -64,6 +64,16 @@ function App() {
   const handleUpdateCard = async (updatedCard) => {
     if (!editingCard) return;
     
+    // Optimistic Update
+    const originalCards = [...cards];
+    const index = cards.findIndex(c => c._id === updatedCard._id);
+    if (index !== -1) {
+      const newCards = [...cards];
+      newCards[index] = updatedCard;
+      setCards(newCards);
+    }
+    setEditingCard(null);
+
     try {
       const response = await fetch(`/api/cards/${updatedCard._id}`, {
         method: 'PUT',
@@ -81,16 +91,18 @@ function App() {
       
       const savedCard = await response.json();
 
-      // Update local state
-      const index = cards.findIndex(c => c._id === savedCard._id);
-      if (index !== -1) {
-        const newCards = [...cards];
-        newCards[index] = savedCard;
-        setCards(newCards);
-      }
-      setEditingCard(null);
+      // Confirm update with server data
+      setCards(prevCards => {
+        const newCards = [...prevCards];
+        const idx = newCards.findIndex(c => c._id === savedCard._id);
+        if (idx !== -1) {
+          newCards[idx] = savedCard;
+        }
+        return newCards;
+      });
     } catch (err) {
       alert('Error saving card: ' + err.message);
+      setCards(originalCards); // Revert on error
     }
   };
 
@@ -255,7 +267,7 @@ function App() {
     });
 
     return result;
-  }, [searchTerm, sortConfig, statMode, skillFilter]);
+  }, [cards, searchTerm, sortConfig, statMode, skillFilter]);
 
   const totalPages = Math.ceil(filteredAndSortedCards.length / itemsPerPage);
   const currentCards = filteredAndSortedCards.slice((page - 1) * itemsPerPage, page * itemsPerPage);
