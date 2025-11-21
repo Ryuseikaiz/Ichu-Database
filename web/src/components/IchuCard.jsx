@@ -30,10 +30,8 @@ export const IchuCard = ({ card, onEdit }) => {
   let statsObj = card.stats?.idolized?.etoile;
   let isEtoile = true;
 
-  // Fallback for Etoile if missing
   if (!statsObj || (!statsObj.wild && !statsObj.pop && !statsObj.cool)) {
-      statsObj = card.stats?.idolized?.max_lv;
-      isEtoile = false; // Don't show Etoile badge if we fell back
+      isEtoile = false;
   }
   
   const stats = statsObj || { wild: "0", pop: "0", cool: "0" };
@@ -49,7 +47,6 @@ export const IchuCard = ({ card, onEdit }) => {
         />
         <div className="absolute top-2 right-2 flex gap-1">
             {isEtoile && <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded-full shadow-sm font-bold">Etoile +5</span>}
-            {!isEtoile && <span className="bg-yellow-500 text-white text-xs px-2 py-1 rounded-full shadow-sm font-bold">Max Lv</span>}
             {onEdit && (
               <button 
                 onClick={(e) => { e.stopPropagation(); onEdit(); }}

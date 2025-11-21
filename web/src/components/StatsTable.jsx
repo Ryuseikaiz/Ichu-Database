@@ -9,8 +9,7 @@ export const StatsTable = ({ stats }) => {
   let label = "Etoile +5";
   
   if (!displayStats || (!displayStats.wild && !displayStats.pop && !displayStats.cool)) {
-      displayStats = stats?.idolized?.max_lv;
-      label = "Max Lv (Fallback)";
+      label = "Etoile +5 (Missing)";
   }
 
   return (

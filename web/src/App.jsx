@@ -259,13 +259,12 @@ function App() {
   const getCardStats = (card) => {
     // Always use Etoile stats
     let statsObj = card.stats?.idolized?.etoile;
-    
-    // Fallback for Etoile
-    if (!statsObj || (!statsObj.wild && !statsObj.pop && !statsObj.cool)) {
-        statsObj = card.stats?.idolized?.max_lv;
-    }
-
     return statsObj || { wild: "0", pop: "0", cool: "0" };
+  };
+
+  const isEtoileStats = (card) => {
+    const statsObj = card.stats?.idolized?.etoile;
+    return statsObj && (statsObj.wild || statsObj.pop || statsObj.cool);
   };
 
   const calculateTotal = (stats) => {
@@ -432,13 +431,14 @@ function App() {
                       {currentCards.map((card, index) => {
                         const stats = getCardStats(card);
                         const total = calculateTotal(stats);
+                        const isEtoile = isEtoileStats(card);
                         // Always use idolized image for Etoile mode
                         const imgUrl = card.images?.idolized || card.images?.unidolized;
                         
                         return (
                           <tr key={`${card.name}-${index}`} className="hover:bg-gray-50 transition-colors">
                             <td className="px-4 py-2">
-                              <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-200 bg-gray-100">
+                              <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-200 bg-gray-100 relative">
                                 <img src={imgUrl} alt="" className="w-full h-full object-cover" loading="lazy" />
                               </div>
                             </td>
@@ -447,10 +447,10 @@ function App() {
                                 {card.name}
                               </a>
                             </td>
-                            <td className="px-4 py-2 text-right font-mono text-gray-600">{stats.wild}</td>
-                            <td className="px-4 py-2 text-right font-mono text-gray-600">{stats.pop}</td>
-                            <td className="px-4 py-2 text-right font-mono text-gray-600">{stats.cool}</td>
-                            <td className="px-4 py-2 text-right font-mono font-bold text-gray-800">{total}</td>
+                            <td className={cn("px-4 py-2 text-right font-mono", !isEtoile ? "text-gray-400" : "text-gray-600")}>{stats.wild}</td>
+                            <td className={cn("px-4 py-2 text-right font-mono", !isEtoile ? "text-gray-400" : "text-gray-600")}>{stats.pop}</td>
+                            <td className={cn("px-4 py-2 text-right font-mono", !isEtoile ? "text-gray-400" : "text-gray-600")}>{stats.cool}</td>
+                            <td className={cn("px-4 py-2 text-right font-mono font-bold", !isEtoile ? "text-gray-500" : "text-gray-800")}>{total}</td>
                             <td className="px-4 py-2">
                               {card.skill && (
                                 <div>
