@@ -1,0 +1,12 @@
+[
+  [
+    "Leon LE/GR",
+    "https://ichu.fandom.com/wiki/Leon_LE/GR",
+    "HTTPSConnectionPool(host='i-chu.fandom.com', port=443): Read timed out."
+  ],
+  [
+    "(Mogitate☆Fresh!) Kanata Minato LE/GR",
+    "https://ichu.fandom.com/wiki/(Mogitate%E2%98%86Fresh!)_Kanata_Minato_LE/GR",
+    "HTTPSConnectionPool(host='ichu.fandom.com', port=443): Read timed out. (read timeout=5)"
+  ]
+]
