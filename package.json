@@ -2,7 +2,7 @@
   "name": "ichu-database-monorepo",
   "version": "1.0.0",
   "scripts": {
-    "vercel-build": "echo '--- STARTING BUILD ---' && cd web && npm install --production=false && echo '--- INSTALL DONE ---' && npm run build && echo '--- BUILD DONE ---'",
+    "vercel-build": "cd web && npm install && npm run build",
     "start": "cd server && npm start",
     "seed": "cd server && npm run seed"
   },
