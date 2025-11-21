@@ -11,6 +11,16 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json({ limit: '50mb' })); // Increased limit for large payloads if needed
 
+// Simple Authentication Middleware
+const authenticate = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (authHeader === 'Bearer secret-token-bedebede') {
+    next();
+  } else {
+    res.status(401).json({ error: 'Unauthorized' });
+  }
+};
+
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
@@ -20,6 +30,15 @@ mongoose.connect(process.env.MONGODB_URI, {
 .catch(err => console.error('MongoDB connection error:', err));
 
 // Routes
+
+app.post('/api/login', (req, res) => {
+  const { username, password } = req.body;
+  if (username === 'bedebede' && password === '123') {
+    res.json({ token: 'secret-token-bedebede', username: 'bedebede' });
+  } else {
+    res.status(401).json({ error: 'Invalid credentials' });
+  }
+});
 
 // GET all cards
 app.get('/api/cards', async (req, res) => {
@@ -32,7 +51,7 @@ app.get('/api/cards', async (req, res) => {
 });
 
 // PUT update card
-app.put('/api/cards/:id', async (req, res) => {
+app.put('/api/cards/:id', authenticate, async (req, res) => {
   try {
     const { id } = req.params;
     const updatedCard = await Card.findByIdAndUpdate(id, req.body, { new: true });
