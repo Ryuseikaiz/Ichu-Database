@@ -5,10 +5,11 @@ export const StatsTable = ({ stats }) => {
   const formatVal = (val) => val || "-";
   
   // Determine which stats to show (Etoile or fallback to Max Lv)
-  let displayStats = stats?.idolized?.etoile;
+  // Stats are flattened in DB
+  let displayStats = stats || { wild: "0", pop: "0", cool: "0" };
   let label = "Etoile +5";
   
-  if (!displayStats || (!displayStats.wild && !displayStats.pop && !displayStats.cool)) {
+  if (displayStats.wild === "0" && displayStats.pop === "0" && displayStats.cool === "0") {
       label = "Etoile +5 (Missing)";
   }
 

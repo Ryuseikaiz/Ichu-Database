@@ -26,15 +26,13 @@ export const IchuCard = ({ card, onEdit }) => {
   // Always use Idolized Image (or fallback to Unidolized)
   const currentImage = card.images?.idolized || card.images?.unidolized;
   
-  // Always use Etoile Stats
-  let statsObj = card.stats?.idolized?.etoile;
+  // Always use Etoile Stats (flattened in DB)
+  const stats = card.stats || { wild: "0", pop: "0", cool: "0" };
   let isEtoile = true;
 
-  if (!statsObj || (!statsObj.wild && !statsObj.pop && !statsObj.cool)) {
+  if (stats.wild === "0" && stats.pop === "0" && stats.cool === "0") {
       isEtoile = false;
   }
-  
-  const stats = statsObj || { wild: "0", pop: "0", cool: "0" };
 
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-gray-100 flex flex-col relative">

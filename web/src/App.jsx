@@ -257,14 +257,20 @@ function App() {
   };
 
   const getCardStats = (card) => {
-    // Always use Etoile stats
-    let statsObj = card.stats?.idolized?.etoile;
-    return statsObj || { wild: "0", pop: "0", cool: "0" };
+    // Stats are flattened in DB (only Etoile stats are stored)
+    return card.stats || { wild: "0", pop: "0", cool: "0" };
   };
 
   const isEtoileStats = (card) => {
-    const statsObj = card.stats?.idolized?.etoile;
-    return statsObj && (statsObj.wild || statsObj.pop || statsObj.cool);
+    const statsObj = card.stats;
+    // Check if it has non-zero values
+    return statsObj && (statsObj.wild !== "0" || statsObj.pop !== "0" || statsObj.cool !== "0");
+  };
+
+  const isEtoileStats = (card) => {
+    const statsObj = card.stats;
+    // Check if it has non-zero values
+    return statsObj && (statsObj.wild !== "0" || statsObj.pop !== "0" || statsObj.cool !== "0");
   };
 
   const calculateTotal = (stats) => {

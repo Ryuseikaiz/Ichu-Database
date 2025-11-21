@@ -4,7 +4,6 @@ import { X, Save } from 'lucide-react';
 export const EditCardModal = ({ card, onClose, onSave }) => {
   const [formData, setFormData] = useState(JSON.parse(JSON.stringify(card)));
   const [activeTab, setActiveTab] = useState('stats'); // 'general', 'stats'
-  const [statMode, setStatMode] = useState('idolized.etoile');
 
   const handleChange = (path, value) => {
     const newData = { ...formData };
@@ -20,21 +19,13 @@ export const EditCardModal = ({ card, onClose, onSave }) => {
     setFormData(newData);
   };
 
-  const getStatValue = (mode, type) => {
-    // mode: 'unidolized.initial', 'idolized.etoile', etc.
-    const parts = mode.split('.');
-    let current = formData.stats;
-    for (const part of parts) {
-      if (!current) return '';
-      current = current[part];
-    }
-    return current ? current[type] : '';
+  // Simplified for flat stats structure
+  const getStatValue = (type) => {
+    return formData.stats ? formData.stats[type] : '';
   };
 
-  const setStatValue = (mode, type, value) => {
-    const parts = mode.split('.');
-    const path = `stats.${parts[0]}.${parts[1]}.${type}`;
-    handleChange(path, value);
+  const setStatValue = (type, value) => {
+    handleChange(`stats.${type}`, value);
   };
 
   const handleSubmit = (e) => {
@@ -135,8 +126,8 @@ export const EditCardModal = ({ card, onClose, onSave }) => {
                     <label className="block text-sm font-bold text-red-500 mb-1">Wild</label>
                     <input
                       type="text"
-                      value={getStatValue(statMode, 'wild')}
-                      onChange={(e) => setStatValue(statMode, 'wild', e.target.value)}
+                      value={getStatValue('wild')}
+                      onChange={(e) => setStatValue('wild', e.target.value)}
                       className="w-full p-2 border rounded focus:ring-red-500 focus:border-red-500"
                     />
                   </div>
@@ -144,8 +135,8 @@ export const EditCardModal = ({ card, onClose, onSave }) => {
                     <label className="block text-sm font-bold text-yellow-500 mb-1">Pop</label>
                     <input
                       type="text"
-                      value={getStatValue(statMode, 'pop')}
-                      onChange={(e) => setStatValue(statMode, 'pop', e.target.value)}
+                      value={getStatValue('pop')}
+                      onChange={(e) => setStatValue('pop', e.target.value)}
                       className="w-full p-2 border rounded focus:ring-yellow-500 focus:border-yellow-500"
                     />
                   </div>
@@ -153,8 +144,8 @@ export const EditCardModal = ({ card, onClose, onSave }) => {
                     <label className="block text-sm font-bold text-blue-500 mb-1">Cool</label>
                     <input
                       type="text"
-                      value={getStatValue(statMode, 'cool')}
-                      onChange={(e) => setStatValue(statMode, 'cool', e.target.value)}
+                      value={getStatValue('cool')}
+                      onChange={(e) => setStatValue('cool', e.target.value)}
                       className="w-full p-2 border rounded focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
