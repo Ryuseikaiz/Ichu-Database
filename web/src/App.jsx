@@ -267,12 +267,6 @@ function App() {
     return statsObj && (statsObj.wild !== "0" || statsObj.pop !== "0" || statsObj.cool !== "0");
   };
 
-  const isEtoileStats = (card) => {
-    const statsObj = card.stats;
-    // Check if it has non-zero values
-    return statsObj && (statsObj.wild !== "0" || statsObj.pop !== "0" || statsObj.cool !== "0");
-  };
-
   const calculateTotal = (stats) => {
     const getVal = (val) => parseInt(String(val || "0").replace(/,/g, ''));
     return (getVal(stats.wild) + getVal(stats.pop) + getVal(stats.cool)).toLocaleString();
