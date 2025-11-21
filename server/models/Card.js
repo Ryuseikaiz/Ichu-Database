@@ -18,35 +18,9 @@ const CardSchema = new mongoose.Schema({
     icon: String
   },
   stats: {
-    unidolized: {
-      initial: {
-        wild: String,
-        pop: String,
-        cool: String
-      },
-      max_lv: {
-        wild: String,
-        pop: String,
-        cool: String
-      }
-    },
-    idolized: {
-      initial: {
-        wild: String,
-        pop: String,
-        cool: String
-      },
-      max_lv: {
-        wild: String,
-        pop: String,
-        cool: String
-      },
-      etoile: {
-        wild: String,
-        pop: String,
-        cool: String
-      }
-    }
+    wild: String,
+    pop: String,
+    cool: String
   },
   stat_icons: {
     wild: String,

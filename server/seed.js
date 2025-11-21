@@ -25,8 +25,17 @@ mongoose.connect(process.env.MONGODB_URI, {
     await Card.deleteMany({});
     console.log('Cleared existing cards collection.');
 
+    // Transform data to only keep Etoile stats
+    const transformedData = cardsData.map(card => {
+      const etoileStats = card.stats?.idolized?.etoile || { wild: "0", pop: "0", cool: "0" };
+      return {
+        ...card,
+        stats: etoileStats
+      };
+    });
+
     // Insert new data
-    await Card.insertMany(cardsData);
+    await Card.insertMany(transformedData);
     console.log('Successfully imported cards to MongoDB!');
 
     process.exit(0);

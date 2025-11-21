@@ -15,7 +15,6 @@ function App() {
   const [sortConfig, setSortConfig] = useState({ key: 'total', direction: 'desc' });
   const [page, setPage] = useState(1);
   const [viewMode, setViewMode] = useState('table'); // 'table' | 'grid'
-  const [statMode, setStatMode] = useState('idolized_max'); // 'unidolized_initial', 'unidolized_max', 'idolized_initial', 'idolized_max', 'etoile'
   const [skillFilter, setSkillFilter] = useState('all');
   const [user, setUser] = useState(null);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -213,34 +212,12 @@ function App() {
     // Sort
     result.sort((a, b) => {
       const getStat = (card, type) => {
-        let statsObj;
-        switch (statMode) {
-          case 'etoile':
-            statsObj = card.stats?.idolized?.etoile;
-            break;
-          case 'idolized_max':
-            statsObj = card.stats?.idolized?.max_lv;
-            break;
-          case 'idolized_initial':
-            statsObj = card.stats?.idolized?.initial;
-            break;
-          case 'unidolized_max':
-            statsObj = card.stats?.unidolized?.max_lv;
-            break;
-          case 'unidolized_initial':
-            statsObj = card.stats?.unidolized?.initial;
-            break;
-          default:
-            statsObj = card.stats?.idolized?.max_lv;
-        }
+        // Always use Etoile stats
+        let statsObj = card.stats?.idolized?.etoile;
         
-        // Fallback logic if specific stat is missing
+        // Fallback logic if Etoile is missing, fallback to Idolized Max
         if (!statsObj || (!statsObj.wild && !statsObj.pop && !statsObj.cool)) {
-             // If Etoile is missing, fallback to Idolized Max
-             if (statMode === 'etoile') statsObj = card.stats?.idolized?.max_lv;
-             // If Max is missing, fallback to Initial? Or just 0?
-             // Let's keep it simple and fallback to 0 if the specific requested one is missing, 
-             // except for Etoile which often defaults to Max Lv in games if not unlocked.
+             statsObj = card.stats?.idolized?.max_lv;
         }
         
         const stats = statsObj || { wild: "0", pop: "0", cool: "0" };
@@ -267,7 +244,7 @@ function App() {
     });
 
     return result;
-  }, [cards, searchTerm, sortConfig, statMode, skillFilter]);
+  }, [cards, searchTerm, sortConfig, skillFilter]);
 
   const totalPages = Math.ceil(filteredAndSortedCards.length / itemsPerPage);
   const currentCards = filteredAndSortedCards.slice((page - 1) * itemsPerPage, page * itemsPerPage);
@@ -280,29 +257,11 @@ function App() {
   };
 
   const getCardStats = (card) => {
-    let statsObj;
-    switch (statMode) {
-      case 'etoile':
-        statsObj = card.stats?.idolized?.etoile;
-        break;
-      case 'idolized_max':
-        statsObj = card.stats?.idolized?.max_lv;
-        break;
-      case 'idolized_initial':
-        statsObj = card.stats?.idolized?.initial;
-        break;
-      case 'unidolized_max':
-        statsObj = card.stats?.unidolized?.max_lv;
-        break;
-      case 'unidolized_initial':
-        statsObj = card.stats?.unidolized?.initial;
-        break;
-      default:
-        statsObj = card.stats?.idolized?.max_lv;
-    }
+    // Always use Etoile stats
+    let statsObj = card.stats?.idolized?.etoile;
     
     // Fallback for Etoile
-    if (statMode === 'etoile' && (!statsObj || (!statsObj.wild && !statsObj.pop && !statsObj.cool))) {
+    if (!statsObj || (!statsObj.wild && !statsObj.pop && !statsObj.cool)) {
         statsObj = card.stats?.idolized?.max_lv;
     }
 
@@ -365,58 +324,6 @@ function App() {
             </div>
 
             <div className="flex items-center gap-3">
-              <div className="flex bg-gray-100 rounded-lg p-1 border border-gray-200 overflow-x-auto max-w-[500px]">
-                <button
-                  onClick={() => setStatMode('unidolized_initial')}
-                  className={cn(
-                    "px-2 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap",
-                    statMode === 'unidolized_initial' ? "bg-white shadow text-gray-900" : "text-gray-500 hover:text-gray-700"
-                  )}
-                >
-                  Unidolized (Init)
-                </button>
-                <button
-                  onClick={() => setStatMode('unidolized_max')}
-                  className={cn(
-                    "px-2 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap",
-                    statMode === 'unidolized_max' ? "bg-white shadow text-gray-900" : "text-gray-500 hover:text-gray-700"
-                  )}
-                >
-                  Unidolized (Max)
-                </button>
-                <div className="w-px bg-gray-300 mx-1 h-4 self-center"></div>
-                <button
-                  onClick={() => setStatMode('idolized_initial')}
-                  className={cn(
-                    "px-2 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap flex items-center gap-1",
-                    statMode === 'idolized_initial' ? "bg-white shadow text-yellow-600" : "text-gray-500 hover:text-gray-700"
-                  )}
-                >
-                  <Star size={12} className={statMode === 'idolized_initial' ? "fill-yellow-500" : ""} />
-                  Idolized (Init)
-                </button>
-                <button
-                  onClick={() => setStatMode('idolized_max')}
-                  className={cn(
-                    "px-2 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap flex items-center gap-1",
-                    statMode === 'idolized_max' ? "bg-white shadow text-yellow-600" : "text-gray-500 hover:text-gray-700"
-                  )}
-                >
-                  <Star size={12} className={statMode === 'idolized_max' ? "fill-yellow-500" : ""} />
-                  Idolized (Max)
-                </button>
-                <button
-                  onClick={() => setStatMode('etoile')}
-                  className={cn(
-                    "px-2 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap flex items-center gap-1",
-                    statMode === 'etoile' ? "bg-white shadow text-purple-600" : "text-gray-500 hover:text-gray-700"
-                  )}
-                >
-                  <Star size={12} className={statMode === 'etoile' ? "fill-purple-500" : ""} />
-                  Etoile +5
-                </button>
-              </div>
-
               <div className="flex bg-gray-100 rounded-lg p-1 border border-gray-200">
                 <button
                   onClick={() => setViewMode('table')}
@@ -525,8 +432,8 @@ function App() {
                       {currentCards.map((card, index) => {
                         const stats = getCardStats(card);
                         const total = calculateTotal(stats);
-                        const isIdolized = statMode.includes('idolized') || statMode === 'etoile';
-                        const imgUrl = isIdolized ? card.images?.idolized : card.images?.unidolized;
+                        // Always use idolized image for Etoile mode
+                        const imgUrl = card.images?.idolized || card.images?.unidolized;
                         
                         return (
                           <tr key={`${card.name}-${index}`} className="hover:bg-gray-50 transition-colors">
@@ -588,7 +495,6 @@ function App() {
                   <IchuCard 
                     key={`${card.name}-${index}`} 
                     card={card} 
-                    globalStatMode={statMode}
                     onEdit={user ? () => setEditingCard({ card }) : undefined}
                   />
                 ))}

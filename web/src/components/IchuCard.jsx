@@ -20,41 +20,18 @@ const StatBar = ({ label, value, max = 13000, color }) => {
   );
 };
 
-export const IchuCard = ({ card, globalStatMode, onEdit }) => {
+export const IchuCard = ({ card, onEdit }) => {
   const [showDetails, setShowDetails] = useState(false);
-  const mode = globalStatMode || 'unidolized_max'; 
   
-  // Determine Image
-  const isIdolizedImage = mode.includes('idolized') || mode === 'etoile';
-  const currentImage = isIdolizedImage ? card.images.idolized : card.images.unidolized;
+  // Always use Idolized Image (or fallback to Unidolized)
+  const currentImage = card.images?.idolized || card.images?.unidolized;
   
-  // Determine Stats
-  let statsObj;
-  let isEtoile = false;
-
-  switch (mode) {
-    case 'etoile':
-      statsObj = card.stats?.idolized?.etoile;
-      isEtoile = true;
-      break;
-    case 'idolized_max':
-      statsObj = card.stats?.idolized?.max_lv;
-      break;
-    case 'idolized_initial':
-      statsObj = card.stats?.idolized?.initial;
-      break;
-    case 'unidolized_max':
-      statsObj = card.stats?.unidolized?.max_lv;
-      break;
-    case 'unidolized_initial':
-      statsObj = card.stats?.unidolized?.initial;
-      break;
-    default:
-      statsObj = card.stats?.unidolized?.max_lv;
-  }
+  // Always use Etoile Stats
+  let statsObj = card.stats?.idolized?.etoile;
+  let isEtoile = true;
 
   // Fallback for Etoile if missing
-  if (mode === 'etoile' && (!statsObj || (!statsObj.wild && !statsObj.pop && !statsObj.cool))) {
+  if (!statsObj || (!statsObj.wild && !statsObj.pop && !statsObj.cool)) {
       statsObj = card.stats?.idolized?.max_lv;
       isEtoile = false; // Don't show Etoile badge if we fell back
   }
@@ -72,7 +49,7 @@ export const IchuCard = ({ card, globalStatMode, onEdit }) => {
         />
         <div className="absolute top-2 right-2 flex gap-1">
             {isEtoile && <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded-full shadow-sm font-bold">Etoile +5</span>}
-            {!isEtoile && isIdolizedImage && <span className="bg-yellow-500 text-white text-xs px-2 py-1 rounded-full shadow-sm font-bold">Idolized</span>}
+            {!isEtoile && <span className="bg-yellow-500 text-white text-xs px-2 py-1 rounded-full shadow-sm font-bold">Max Lv</span>}
             {onEdit && (
               <button 
                 onClick={(e) => { e.stopPropagation(); onEdit(); }}

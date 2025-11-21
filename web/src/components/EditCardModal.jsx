@@ -4,7 +4,7 @@ import { X, Save } from 'lucide-react';
 export const EditCardModal = ({ card, onClose, onSave }) => {
   const [formData, setFormData] = useState(JSON.parse(JSON.stringify(card)));
   const [activeTab, setActiveTab] = useState('stats'); // 'general', 'stats'
-  const [statMode, setStatMode] = useState('idolized_max');
+  const [statMode, setStatMode] = useState('idolized.etoile');
 
   const handleChange = (path, value) => {
     const newData = { ...formData };
@@ -128,30 +128,8 @@ export const EditCardModal = ({ card, onClose, onSave }) => {
 
           {activeTab === 'stats' && (
             <div>
-              <div className="flex flex-wrap gap-2 mb-4">
-                {[
-                  { id: 'unidolized.initial', label: 'Unidolized (Init)' },
-                  { id: 'unidolized.max_lv', label: 'Unidolized (Max)' },
-                  { id: 'idolized.initial', label: 'Idolized (Init)' },
-                  { id: 'idolized.max_lv', label: 'Idolized (Max)' },
-                  { id: 'idolized.etoile', label: 'Etoile +5' },
-                ].map((mode) => (
-                  <button
-                    key={mode.id}
-                    onClick={() => setStatMode(mode.id)}
-                    className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                      statMode === mode.id
-                        ? 'bg-pink-100 text-pink-700 border border-pink-200'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    }`}
-                  >
-                    {mode.label}
-                  </button>
-                ))}
-              </div>
-
               <div className="bg-gray-50 p-4 rounded-lg border">
-                <h3 className="font-bold text-gray-700 mb-4 capitalize">{statMode.replace('.', ' ')} Stats</h3>
+                <h3 className="font-bold text-gray-700 mb-4 capitalize">Etoile +5 Stats</h3>
                 <div className="grid grid-cols-3 gap-4">
                   <div>
                     <label className="block text-sm font-bold text-red-500 mb-1">Wild</label>
