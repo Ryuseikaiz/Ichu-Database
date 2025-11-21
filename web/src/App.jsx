@@ -513,7 +513,8 @@ function App() {
                       {currentCards.map((card, index) => {
                         const stats = getCardStats(card);
                         const total = calculateTotal(stats);
-                        const imgUrl = statMode === 'unidolized' ? card.images.unidolized : card.images.idolized;
+                        const isIdolized = statMode.includes('idolized') || statMode === 'etoile';
+                        const imgUrl = isIdolized ? card.images?.idolized : card.images?.unidolized;
                         
                         return (
                           <tr key={`${card.name}-${index}`} className="hover:bg-gray-50 transition-colors">
