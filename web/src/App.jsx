@@ -212,15 +212,7 @@ function App() {
     // Sort
     result.sort((a, b) => {
       const getStat = (card, type) => {
-        // Always use Etoile stats
-        let statsObj = card.stats?.idolized?.etoile;
-        
-        // Fallback logic if Etoile is missing, fallback to Idolized Max
-        if (!statsObj || (!statsObj.wild && !statsObj.pop && !statsObj.cool)) {
-             statsObj = card.stats?.idolized?.max_lv;
-        }
-        
-        const stats = statsObj || { wild: "0", pop: "0", cool: "0" };
+        const stats = card.stats || { wild: 0, pop: 0, cool: 0 };
         
         const getVal = (val) => {
           if (!val) return 0;
