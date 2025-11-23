@@ -300,7 +300,11 @@ function App() {
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              <h1 className="text-2xl font-bold text-pink-500 tracking-tight">I-Chu Card Database</h1>
+              <div>
+                <h1 className="text-2xl font-bold text-pink-500 tracking-tight">I-Chu Card Database</h1>
+                <div className="text-xs text-gray-500 font-medium mt-1">All cards are Étoile+5</div>
+                <div className="text-xs text-gray-500 font-medium mt-1">Data from I-Chu Wiki</div>
+              </div>
               <button
                 onClick={fetchCards}
                 className="p-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
