@@ -302,8 +302,7 @@ function App() {
             <div className="flex items-center gap-4">
               <div>
                 <h1 className="text-2xl font-bold text-pink-500 tracking-tight">I-Chu Card Database</h1>
-                <div className="text-xs text-gray-500 font-medium mt-1">All cards are Étoile+5</div>
-                <div className="text-xs text-gray-500 font-medium mt-1">Data from I-Chu Wiki</div>
+                <div className="text-xs text-gray-500 font-medium mt-1">All cards are Étoile+5. Data from I-Chu Wiki</div>
               </div>
               <button
                 onClick={fetchCards}
