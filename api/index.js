@@ -46,6 +46,18 @@ app.post('/api/login', (req, res) => {
   }
 });
 
+
+app.post('/api/cards', authenticate, async (req, res) => {
+  await connectToDatabase();
+  try {
+    const card = new Card(req.body);
+    await card.save();
+    res.status(201).json(card);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
 app.get('/api/cards', async (req, res) => {
   await connectToDatabase();
   try {
